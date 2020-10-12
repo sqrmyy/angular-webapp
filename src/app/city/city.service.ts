@@ -1,14 +1,22 @@
 import { Injectable } from '@angular/core';
 import { City } from './city';
+import { HttpService } from '../HttpService';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CityService {
+  environment = {
+    production: false,
+    appId: '<OpenweathermapのAPIキー>',
+    baseUrl: 'http://api.openweathermap.org/data/2.5/'
+  };
   cities: City[];
-  constructor() {
+  constructor(
+    private service: HttpService
+  ) {
     this.cities = [];
-   }
+  }
   
   addCity(city: City): void {
     var id: number;
@@ -17,8 +25,23 @@ export class CityService {
     /* idを設定 */
     city.id = id;
 
-    /* 配列に追加 */
-    this.cities.push(city);
+    /* OpenweathermapのAPIを呼び出す処理を追加 */
+    //var result: any;
+    var apiEndPoint: string = this.environment.baseUrl
+    + 'weather?q=' + city.name
+    + '&appid=' + this.environment.appId;
+
+    this.service.getWeatheritemsbyCity(apiEndPoint)
+    .subscribe(res => {
+      var weather = res.weather[0].description;
+      // 天気を設定して配列に追加
+      city.weather = weather;
+      this.cities.push(city);
+    }, err => {
+      console.log(err);
+    }, () => {
+
+    });
   }
 
   /* 追加 */

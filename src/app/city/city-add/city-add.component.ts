@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { City } from './city';
+import { City } from '../city';
 import { CityService } from '../city.service';
 
 @Component({
@@ -10,21 +10,23 @@ import { CityService } from '../city.service';
 })
 export class CityAddComponent implements OnInit {
 
-  constructor() {
+  constructor(
     private router: Router,
     private service: CityService
-   }
+  ) { }
 
   ngOnInit() {
   }
+
   onSubmit(form: any): void {
     // フォームの値を取得
     let name = form.name;
     // Cityクラスのインスタンスを生成して名前を指定
     var city: City = new City;
     city.name = name;
+    city.name = 'test';
     // 天気はとりあえず'-'を設定
-    city.weather = '';
+    city.weather = '-';
 
     // サービスの都市登録メソッドに渡す
     this.service.addCity(city);
